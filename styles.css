@@ -487,3 +487,9 @@ body {
     right: 20px;
   }
 }
+
+@media (min-height: 1000px) {
+  .chart-section {
+    margin-top: 70px;
+  }
+}
