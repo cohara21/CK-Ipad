@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#f4f6f5" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>Coral Lovers' Hub - Tablet View</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="tablet-frame" aria-label="Coral vitality monitor tablet screen">
+    <header class="dashboard-header">
+      <h1>CORAL KEEPERS MONITOR</h1>
+      <p>VITALITY MONITOR</p>
+    </header>
+
+    <section class="hero" aria-label="Primary coral monitor status">
+      <div class="gauge-panel" role="img" aria-label="Coral vitality gauge showing strong health">
+        <div class="meter-wrapper">
+          <svg id="meterSvg" class="gauge-svg" viewBox="0 0 260 160" aria-label="Coral vitality arc gauge">
+            <defs>
+              <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#ff5c69;" />
+                <stop offset="35%" style="stop-color:#ffb020;" />
+                <stop offset="65%" style="stop-color:#c7dd19;" />
+                <stop offset="100%" style="stop-color:#34c96b;" />
+              </linearGradient>
+            </defs>
+            <path class="gauge-base" d="M 8 134 A 114 134 0 0 1 252 134" />
+            <g id="knobGroup">
+              <rect class="knob-pill" x="-10" y="-20" width="20" height="40" rx="10" />
+            </g>
+          </svg>
+        </div>
+        <img class="coral-mascot" src="cory.png" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1fab8.svg';" alt="" aria-hidden="true" />
+      </div>
+
+      <div class="hero-stats">
+        <h3 class="health-headline">AI HEALTH SCORE</h3>
+        <div class="score-row">
+          <p class="score" id="healthScore">94%</p>
+          <p class="delta" id="scoreDelta"><span id="deltaIcon">↑</span><span id="deltaValue">2%</span></p>
+        </div>
+        <p class="summary" id="statusSummary">
+          PH levels stabilized after yesterday's automated calcium injection cycle.
+          Bio-filters performing optimally.
+        </p>
+        <div class="tank-status">
+          <span>TANK STATUS</span>
+          <strong id="tankStatus">STABLE</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="vitals" aria-label="Core vitals">
+      <h2>CORE VITALS</h2>
+      <div class="vital-grid">
+        <article class="vital-card">
+          <div class="card-top">
+            <img class="card-icon icon-temp" src="assets/temp-icon.svg" alt="Temperature icon" />
+            <small><span class="trend-icon trend-temp" id="tempTrendIcon">↑</span><span id="tempTrendText">0.2°</span></small>
+          </div>
+          <p class="label">TEMPERATURE</p>
+          <p class="value" id="tempValue">78.2°F</p>
+        </article>
+
+        <article class="vital-card">
+          <div class="card-top">
+            <img class="card-icon icon-ph" src="assets/ph-icon.svg" alt="pH icon" />
+            <small><span class="trend-icon trend-ph" id="phTrendIcon">→</span><span id="phTrendText">OK</span></small>
+          </div>
+          <p class="label">PH LEVEL</p>
+          <p class="value" id="phValue">8.4</p>
+        </article>
+
+        <article class="vital-card">
+          <div class="card-top">
+            <img class="card-icon icon-salinity" src="assets/salinity-icon.svg" alt="Salinity icon" />
+            <small><span class="trend-icon trend-salinity" id="salTrendIcon">↓</span><span id="salTrendText">1 ppt</span></small>
+          </div>
+          <p class="label">SALINITY</p>
+          <p class="value" id="salValue">35 ppt</p>
+        </article>
+
+        <article class="vital-card">
+          <div class="card-top">
+            <img class="card-icon icon-redox" src="assets/redox-icon.svg" alt="Redox icon" />
+            <small><span class="trend-icon trend-redox" id="redoxTrendIcon">↑</span><span id="redoxTrendText">NOM</span></small>
+          </div>
+          <p class="label">REDOX</p>
+          <p class="value" id="redoxValue">380 mV</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="chart-section" aria-label="Temperature history for last 24 hours">
+      <h3>TEMPERATURE <span>(Last 24 Hours)</span></h3>
+      <div class="chart-wrapper">
+        <div class="y-axis">
+          <span>120°</span>
+          <span>90°</span>
+          <span>60°</span>
+          <span>30°</span>
+        </div>
+        <div class="chart-card">
+          <img class="chart-grid" src="assets/chart-grid.svg" alt="Temperature chart baseline" />
+          <img class="chart-line" src="assets/chart-line.svg" alt="Temperature trend" />
+          <img class="chart-marker" src="assets/chart-marker.svg" alt="Current reading marker" />
+          <div class="tooltip">74° 2:38 AM</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const ASSET_UP = "assets/arrow-up.svg";
+      const ASSET_DOWN = "assets/arrow-down.svg";
+      const ASSET_FLAT = "assets/flat-indicator.svg";
+      const RADIUS_X = 114;
+      const RADIUS_Y = 134;
+      const CX = 130;
+      const CY = 134;
+      const INDICATOR_OFFSET = 2.5;
+      const KNOB_SHIFT_X = 5;
+
+      const el = {
+        knobGroup: document.getElementById("knobGroup"),
+        healthScore: document.getElementById("healthScore"),
+        scoreDelta: document.getElementById("scoreDelta"),
+        deltaIcon: document.getElementById("deltaIcon"),
+        deltaValue: document.getElementById("deltaValue"),
+        statusSummary: document.getElementById("statusSummary"),
+        tankStatus: document.getElementById("tankStatus"),
+        tempValue: document.getElementById("tempValue"),
+        phValue: document.getElementById("phValue"),
+        salValue: document.getElementById("salValue"),
+        redoxValue: document.getElementById("redoxValue"),
+        tempTrendIcon: document.getElementById("tempTrendIcon"),
+        tempTrendText: document.getElementById("tempTrendText"),
+        phTrendIcon: document.getElementById("phTrendIcon"),
+        phTrendText: document.getElementById("phTrendText"),
+        salTrendIcon: document.getElementById("salTrendIcon"),
+        salTrendText: document.getElementById("salTrendText"),
+        redoxTrendIcon: document.getElementById("redoxTrendIcon"),
+        redoxTrendText: document.getElementById("redoxTrendText")
+      };
+
+      const state = {
+        temperature: 78.2,
+        ph: 8.4,
+        salinity: 35,
+        redox: 380,
+        health: 94
+      };
+
+      function clamp(value, min, max) {
+        return Math.min(max, Math.max(min, value));
+      }
+
+      function lerp(a, b, t) {
+        return Math.round(a + (b - a) * t);
+      }
+
+      function hexToRgb(hex) {
+        const value = hex.replace("#", "");
+        return {
+          r: parseInt(value.slice(0, 2), 16),
+          g: parseInt(value.slice(2, 4), 16),
+          b: parseInt(value.slice(4, 6), 16)
+        };
+      }
+
+      function colorFromHealth(health) {
+        const stops = [
+          { at: 0, color: "#ff5c69" },
+          { at: 35, color: "#ffb020" },
+          { at: 65, color: "#c7dd19" },
+          { at: 100, color: "#34c96b" }
+        ];
+
+        for (let i = 0; i < stops.length - 1; i += 1) {
+          const current = stops[i];
+          const next = stops[i + 1];
+          if (health >= current.at && health <= next.at) {
+            const t = (health - current.at) / (next.at - current.at);
+            const c1 = hexToRgb(current.color);
+            const c2 = hexToRgb(next.color);
+            return "rgb(" + lerp(c1.r, c2.r, t) + ", " + lerp(c1.g, c2.g, t) + ", " + lerp(c1.b, c2.b, t) + ")";
+          }
+        }
+
+        return stops[stops.length - 1].color;
+      }
+
+      function jitter(value, range) {
+        return value + (Math.random() * 2 - 1) * range;
+      }
+
+      function updateMeter(value) {
+        const clamped = clamp(value, 0, 100);
+        const percentage = clamped / 100;
+        const angleRad = Math.PI - (percentage * Math.PI);
+        const x = CX + RADIUS_X * Math.cos(angleRad);
+        const y = CY - RADIUS_Y * Math.sin(angleRad);
+        const dx = -RADIUS_X * Math.sin(angleRad);
+        const dy = -RADIUS_Y * Math.cos(angleRad);
+        const rotation = (Math.atan2(dy, dx) * 180) / Math.PI;
+        const normalX = (x - CX) / (RADIUS_X * RADIUS_X);
+        const normalY = (y - CY) / (RADIUS_Y * RADIUS_Y);
+        const normalLength = Math.hypot(normalX, normalY) || 1;
+        const offsetX = (normalX / normalLength) * INDICATOR_OFFSET;
+        const offsetY = (normalY / normalLength) * INDICATOR_OFFSET;
+
+        el.knobGroup.setAttribute("transform", "translate(" + (x + offsetX + KNOB_SHIFT_X) + ", " + (y + offsetY) + ") rotate(" + rotation + ")");
+      }
+
+      function applyTrend(iconEl, textEl, delta, units) {
+        const absDelta = Math.abs(delta);
+        if (absDelta < 0.04) {
+          iconEl.textContent = "→";
+          textEl.textContent = units === "status" ? "OK" : "NOM";
+          return;
+        }
+
+        if (delta > 0) {
+          iconEl.textContent = "↑";
+          textEl.textContent = units === "deg" ? absDelta.toFixed(1) + "\u00b0" : units === "ppt" ? absDelta.toFixed(1) + " ppt" : "UP";
+          return;
+        }
+
+        iconEl.textContent = "↓";
+        textEl.textContent = units === "deg" ? absDelta.toFixed(1) + "\u00b0" : units === "ppt" ? absDelta.toFixed(1) + " ppt" : "LOW";
+      }
+
+      function computeHealth(next) {
+        const tempPenalty = Math.abs(next.temperature - 78.5) * 11;
+        const phPenalty = Math.abs(next.ph - 8.3) * 150;
+        const salPenalty = Math.abs(next.salinity - 35) * 14;
+        const redoxPenalty = next.redox < 350 ? (350 - next.redox) * 0.25 : next.redox > 430 ? (next.redox - 430) * 0.18 : 0;
+        const totalPenalty = tempPenalty + phPenalty + salPenalty + redoxPenalty;
+        return clamp(Math.round(100 - totalPenalty), 28, 99);
+      }
+
+      function updateStatus(health) {
+        let label = "STABLE";
+        let summary = "PH levels stabilized after the latest cycle. Bio-filters performing optimally.";
+        let toneClass = "status-stable";
+
+        if (health < 55) {
+          label = "ALERT";
+          summary = "Multiple readings are outside safe bounds. Immediate intervention recommended.";
+          toneClass = "status-alert";
+        } else if (health < 78) {
+          label = "WATCH";
+          summary = "Tank drifting from target balance. Auto-correction routines are compensating.";
+          toneClass = "status-watch";
+        }
+
+        el.tankStatus.textContent = label;
+        el.tankStatus.className = toneClass;
+        el.statusSummary.textContent = summary;
+      }
+
+      function updateScore(nextHealth) {
+        const delta = nextHealth - state.health;
+        const absDelta = Math.abs(delta).toFixed(0);
+        el.healthScore.textContent = Math.round(nextHealth) + "%";
+        el.healthScore.style.color = colorFromHealth(nextHealth);
+        updateMeter(nextHealth);
+
+        if (delta > 0.09) {
+          el.deltaIcon.textContent = "↑";
+          el.deltaValue.textContent = absDelta + "%";
+          el.scoreDelta.className = "delta";
+        } else if (delta < -0.09) {
+          el.deltaIcon.textContent = "↓";
+          el.deltaValue.textContent = absDelta + "%";
+          el.scoreDelta.className = "delta delta-negative";
+        } else {
+          el.deltaIcon.textContent = "→";
+          el.deltaValue.textContent = "0%";
+          el.scoreDelta.className = "delta delta-neutral";
+        }
+      }
+
+      function tick() {
+        const previous = { ...state };
+        const stressEvent = Math.random() < 0.08;
+
+        state.temperature = clamp(jitter(state.temperature, 0.2) + (stressEvent ? 0.22 : 0), 74.5, 84.8);
+        state.ph = clamp(jitter(state.ph, 0.045) + (stressEvent ? -0.05 : 0), 7.6, 8.9);
+        state.salinity = clamp(jitter(state.salinity, 0.12) + (stressEvent ? -0.14 : 0), 31, 38.8);
+        state.redox = clamp(jitter(state.redox, 5) + (stressEvent ? -7 : 0), 300, 440);
+
+        const randomDirection = Math.random() < 0.5 ? -1 : 1;
+        const randomMagnitude = Math.floor(Math.random() * 3);
+        const randomDelta = randomDirection * randomMagnitude;
+        const nextHealth = clamp(Math.round(state.health + randomDelta), 28, 99);
+
+        el.tempValue.textContent = state.temperature.toFixed(1) + "\u00b0F";
+        el.phValue.textContent = state.ph.toFixed(2);
+        el.salValue.textContent = state.salinity.toFixed(1) + " ppt";
+        el.redoxValue.textContent = Math.round(state.redox) + " mV";
+
+        applyTrend(el.tempTrendIcon, el.tempTrendText, state.temperature - previous.temperature, "deg");
+        applyTrend(el.salTrendIcon, el.salTrendText, state.salinity - previous.salinity, "ppt");
+
+        if (Math.abs(state.ph - 8.3) < 0.12) {
+          el.phTrendIcon.textContent = "→";
+          el.phTrendText.textContent = "OK";
+        } else if (state.ph > 8.5) {
+          el.phTrendIcon.textContent = "↑";
+          el.phTrendText.textContent = "HIGH";
+        } else {
+          el.phTrendIcon.textContent = "↓";
+          el.phTrendText.textContent = "LOW";
+        }
+
+        if (state.redox >= 350 && state.redox <= 410) {
+          el.redoxTrendIcon.textContent = "→";
+          el.redoxTrendText.textContent = "NOM";
+        } else if (state.redox < 350) {
+          el.redoxTrendIcon.textContent = "↓";
+          el.redoxTrendText.textContent = "LOW";
+        } else {
+          el.redoxTrendIcon.textContent = "↑";
+          el.redoxTrendText.textContent = "HIGH";
+        }
+
+        updateScore(nextHealth);
+        updateStatus(nextHealth);
+        state.health = nextHealth;
+      }
+
+      updateScore(state.health);
+      updateMeter(state.health);
+      setInterval(tick, 10000);
+    })();
+  </script>
+</body>
+</html>
