@@ -36,7 +36,7 @@
             </g>
           </svg>
         </div>
-        <img class="coral-mascot" src="cory.png" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1fab8.svg';" alt="" aria-hidden="true" />
+        <img id="healthCory" class="coral-mascot health-cory" src="assets/Cory 1.svg" alt="" aria-hidden="true" />
       </div>
 
       <div class="hero-stats">
@@ -129,6 +129,7 @@
       const KNOB_SHIFT_X = 5;
 
       const el = {
+        healthCory: document.getElementById("healthCory"),
         knobGroup: document.getElementById("knobGroup"),
         healthScore: document.getElementById("healthScore"),
         scoreDelta: document.getElementById("scoreDelta"),
@@ -160,6 +161,23 @@
 
       function clamp(value, min, max) {
         return Math.min(max, Math.max(min, value));
+      }
+
+      function coryMoodImageForScore(score) {
+        const rounded = Math.round(score);
+        if (rounded >= 90) return "assets/Cory 1.svg";
+        if (rounded >= 75) return "assets/Cory 2.svg";
+        if (rounded >= 60) return "assets/Cory 3.svg";
+        if (rounded >= 40) return "assets/Cory 4.svg";
+        if (rounded >= 20) return "assets/Cory 5.svg";
+        return "assets/Cory 6.svg";
+      }
+
+      function updateArcCoryMascot(health) {
+        const src = coryMoodImageForScore(health);
+        if (el.healthCory.getAttribute("src") !== src) {
+          el.healthCory.src = src;
+        }
       }
 
       function lerp(a, b, t) {
@@ -272,6 +290,7 @@
         el.healthScore.textContent = Math.round(nextHealth) + "%";
         el.healthScore.style.color = colorFromHealth(nextHealth);
         updateMeter(nextHealth);
+        updateArcCoryMascot(nextHealth);
 
         if (delta > 0.09) {
           el.deltaIcon.textContent = "↑";
